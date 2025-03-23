@@ -6,6 +6,7 @@ import DailyProgress from '@/components/dashboard/DailyProgress';
 import WeeklyInsights from '@/components/dashboard/WeeklyInsights';
 import QuickAccess from '@/components/dashboard/QuickAccess';
 import DailyInspiration from '@/components/dashboard/DailyInspiration';
+import UserGreeting from '@/components/dashboard/UserGreeting';
 
 const Index = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -25,20 +26,19 @@ const Index = () => {
       
       <main className="pt-16 md:pl-64 transition-all duration-300">
         <div className="p-4 md:p-6 max-w-7xl mx-auto">
-          <header className="mb-6 animate-fade-up">
-            <h1 className="text-3xl md:text-4xl font-serif font-medium text-sage-800">Welcome to Your Mindful Path</h1>
-            <p className="text-sage-600 mt-2">Your journey to inner peace continues today.</p>
-          </header>
+          <UserGreeting />
           
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            {/* Primary content - 8/12 columns on large screens */}
+            <div className="lg:col-span-8 space-y-6">
+              <DailyInspiration />
               <DailyProgress />
-              <WeeklyInsights />
+              <QuickAccess />
             </div>
             
-            <div className="space-y-6">
-              <QuickAccess />
-              <DailyInspiration />
+            {/* Secondary content - 4/12 columns on large screens */}
+            <div className="lg:col-span-4 space-y-6">
+              <WeeklyInsights />
             </div>
           </div>
         </div>
