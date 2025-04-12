@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -263,51 +264,53 @@ const Home = () => {
             </CardContent>
           </Card>
         ) : (
-          <div className="text-center my-8">
-            <h2 className="font-serif text-2xl text-sage-800 mb-4">
-              Điều gì đang ở trong tâm trí bạn?
-            </h2>
-            <p className="text-sage-600">
-              Chọn ý định để nhận lời dạy phù hợp
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-4">
-            {INTENTS.map(intent => (
-              <Button 
-                key={intent.value}
-                variant={selectedIntent === intent.value ? "default" : "outline"}
-                className={`h-24 flex flex-col gap-2 ${
-                  selectedIntent === intent.value 
-                  ? "bg-primary text-white" 
-                  : "hover:bg-sage-50 border-sage-200"
-                }`}
-                onClick={() => setSelectedIntent(intent.value)}
-              >
-                <span className="text-2xl">{intent.emoji}</span>
-                <span>{intent.label}</span>
-              </Button>
-            ))}
-          </div>
-          
-          <Button 
-            size="lg"
-            className="mt-8 w-full py-6 text-lg font-medium"
-            onClick={handleAskBuddha}
-            disabled={isAsking}
-          >
-            {isAsking ? (
-              <>
-                <div className="lotus-loader mr-2">🪷</div>
-                Đang hỏi...
-              </>
-            ) : (
-              <>
-                Hỏi Phật
-                <ChevronRight className="h-5 w-5 ml-1" />
-              </>
-            )}
-          </Button>
+          <>
+            <div className="text-center my-8">
+              <h2 className="font-serif text-2xl text-sage-800 mb-4">
+                Điều gì đang ở trong tâm trí bạn?
+              </h2>
+              <p className="text-sage-600">
+                Chọn ý định để nhận lời dạy phù hợp
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              {INTENTS.map(intent => (
+                <Button 
+                  key={intent.value}
+                  variant={selectedIntent === intent.value ? "default" : "outline"}
+                  className={`h-24 flex flex-col gap-2 ${
+                    selectedIntent === intent.value 
+                    ? "bg-primary text-white" 
+                    : "hover:bg-sage-50 border-sage-200"
+                  }`}
+                  onClick={() => setSelectedIntent(intent.value)}
+                >
+                  <span className="text-2xl">{intent.emoji}</span>
+                  <span>{intent.label}</span>
+                </Button>
+              ))}
+            </div>
+            
+            <Button 
+              size="lg"
+              className="mt-8 w-full py-6 text-lg font-medium"
+              onClick={handleAskBuddha}
+              disabled={isAsking}
+            >
+              {isAsking ? (
+                <>
+                  <div className="lotus-loader mr-2">🪷</div>
+                  Đang hỏi...
+                </>
+              ) : (
+                <>
+                  Hỏi Phật
+                  <ChevronRight className="h-5 w-5 ml-1" />
+                </>
+              )}
+            </Button>
+          </>
         )}
       </main>
       
