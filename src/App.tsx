@@ -15,22 +15,15 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const App = () => {
-  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState<boolean | null>(null);
+  // Force onboarding completion status to true
+  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(true);
 
   useEffect(() => {
-    // Check if user has completed onboarding
-    const intent = localStorage.getItem('hoiphat_intent');
-    setHasCompletedOnboarding(!!intent);
+    // Set default intent if not exists
+    if (!localStorage.getItem('hoiphat_intent')) {
+      localStorage.setItem('hoiphat_intent', 'calm');
+    }
   }, []);
-
-  // Show loading state while checking onboarding status
-  if (hasCompletedOnboarding === null) {
-    return (
-      <div className="h-screen flex items-center justify-center bg-sage-50">
-        <div className="lotus-loader text-4xl">🪷</div>
-      </div>
-    );
-  }
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -39,8 +32,9 @@ const App = () => {
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={hasCompletedOnboarding ? <Home /> : <Navigate to="/onboarding" replace />} />
-            <Route path="/onboarding" element={hasCompletedOnboarding ? <Navigate to="/" replace /> : <Onboarding />} />
+            {/* Always direct to Home page */}
+            <Route path="/" element={<Home />} />
+            <Route path="/onboarding" element={<Navigate to="/" replace />} />
             <Route path="/wisdom" element={<Wisdom />} />
             <Route path="/library" element={<Library />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
