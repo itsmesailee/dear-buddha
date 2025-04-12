@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -38,14 +37,12 @@ const Home = () => {
   const [showEarlyUserInvite, setShowEarlyUserInvite] = useState(false);
   const [usageCount, setUsageCount] = useState(0);
   
-  // New states for breathing animation
   const [showBreathingPrompt, setShowBreathingPrompt] = useState(false);
   const [showBreathingAnimation, setShowBreathingAnimation] = useState(false);
   
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Load usage count on component mount
   useEffect(() => {
     const storedCount = localStorage.getItem('hoiphat_usage_count');
     setUsageCount(storedCount ? parseInt(storedCount, 10) : 0);
@@ -66,41 +63,35 @@ const Home = () => {
     setSelectedFeedback(null);
     setShowEarlyUserInvite(false);
     
-    // Show breathing prompt
     setShowBreathingPrompt(true);
   };
-  
+
   const startBreathingAnimation = () => {
     setShowBreathingPrompt(false);
     setShowBreathingAnimation(true);
     
-    // Play the mindfulness bell sound
     playMindfulnessBell();
   };
-  
+
   const handleBreathingComplete = () => {
     setShowBreathingAnimation(false);
     
-    // Increment usage count
     const newCount = usageCount + 1;
     setUsageCount(newCount);
     localStorage.setItem('hoiphat_usage_count', newCount.toString());
     
-    // Generate wisdom after breathing exercise
     const generatedWisdom = generateBuddhistWisdom(selectedIntent!);
     setWisdom(generatedWisdom);
     setIsAsking(false);
     setShowFeedback(true);
   };
-  
+
   const saveWisdom = () => {
     if (!wisdom) return;
     
-    // Get existing saved wisdom from localStorage
     const savedWisdomStr = localStorage.getItem('hoiphat_saved_wisdom');
     const savedWisdom = savedWisdomStr ? JSON.parse(savedWisdomStr) : [];
     
-    // Add new wisdom to the beginning, keep only the latest 5
     const updatedWisdom = [
       {...wisdom, savedAt: new Date().toISOString(), intent: selectedIntent, feedback: selectedFeedback},
       ...savedWisdom
@@ -118,7 +109,7 @@ const Home = () => {
       )
     });
   };
-  
+
   const resetWisdom = () => {
     setWisdom(null);
     setShowFeedback(false);
@@ -129,17 +120,13 @@ const Home = () => {
   const handleFeedback = (value: string, isPositive: boolean) => {
     setSelectedFeedback(value);
     
-    // Show early user invite if:
-    // 1. Feedback is not positive, or
-    // 2. User has used the app at least 3 times
     if (!isPositive || usageCount >= 3) {
       setShowEarlyUserInvite(true);
     }
   };
-  
+
   return (
     <div className="min-h-screen bg-sage-50 flex flex-col">
-      {/* Header */}
       <header className="p-4 flex justify-between items-center">
         <h1 className="text-xl font-serif font-medium text-sage-800">Hỏi Phật</h1>
         <Button 
@@ -167,169 +154,163 @@ const Home = () => {
             </Button>
           </div>
         ) : showBreathingAnimation ? (
-          <div className="animate-fade-in flex flex-col items-center justify-center my-10">
+          <div className="animate-fade-in flex flex-col items-center justify-center my-10 bg-gradient-to-b from-sage-50 to-sage-100 p-8 rounded-3xl shadow-sm">
             <BreathingAnimation 
-              duration={5000}
+              duration={16000}
+              rounds={2}
               onComplete={handleBreathingComplete}
             />
           </div>
         ) : wisdom ? (
-          <>
-            <Card className="glass-card animate-fade-in relative overflow-hidden">
-              {/* Rich visual background for the wisdom card */}
-              <div className="absolute inset-0 opacity-10 pointer-events-none">
-                <div className="absolute inset-0 bg-repeat bg-center" style={{
-                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M50 5C74.85 5 95 25.15 95 50C95 74.85 74.85 95 50 95C25.15 95 5 74.85 5 50C5 25.15 25.15 5 50 5ZM50 15C30.67 15 15 30.67 15 50C15 69.33 30.67 85 50 85C69.33 85 85 69.33 85 50C85 30.67 69.33 15 50 15Z' fill='%23b38c65' fill-opacity='0.15'/%3E%3C/svg%3E")`
-                }}></div>
-                
-                {/* Subtle lotus pattern */}
-                <div className="absolute top-0 right-0 w-32 h-32 opacity-20">
-                  <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M50 10C65 10 75 25 75 40C75 55 65 70 50 70C35 70 25 55 25 40C25 25 35 10 50 10Z" fill="#b38c65" fillOpacity="0.3"/>
-                    <path d="M50 20C60 20 65 30 65 40C65 50 60 60 50 60C40 60 35 50 35 40C35 30 40 20 50 20Z" fill="#b38c65" fillOpacity="0.3"/>
-                  </svg>
-                </div>
+          <Card className="glass-card animate-fade-in relative overflow-hidden">
+            <div className="absolute inset-0 opacity-10 pointer-events-none">
+              <div className="absolute inset-0 bg-repeat bg-center" style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M50 5C74.85 5 95 25.15 95 50C95 74.85 74.85 95 50 95C25.15 95 5 74.85 5 50C5 25.15 25.15 5 50 5ZM50 15C30.67 15 15 30.67 15 50C15 69.33 30.67 85 50 85C69.33 85 85 69.33 85 50C85 30.67 69.33 15 50 15Z' fill='%23b38c65' fill-opacity='0.15'/%3E%3C/svg%3E")`
+              }}></div>
+              
+              <div className="absolute top-0 right-0 w-32 h-32 opacity-20">
+                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M50 10C65 10 75 25 75 40C75 55 65 70 50 70C35 70 25 55 25 40C25 25 35 10 50 10Z" fill="#b38c65" fillOpacity="0.3"/>
+                  <path d="M50 20C60 20 65 30 65 40C65 50 60 60 50 60C40 60 35 50 35 40C35 30 40 20 50 20Z" fill="#b38c65" fillOpacity="0.3"/>
+                </svg>
               </div>
+            </div>
 
-              <CardContent className="p-6 relative z-10">
-                <div className="flex justify-end mb-2">
-                  <span className="text-xs px-3 py-1 bg-sage-100 text-sage-600 rounded-full">
-                    {INTENTS.find(i => i.value === selectedIntent)?.label || 'Bình yên'}
-                  </span>
-                </div>
-                
-                <blockquote className="font-serif text-xl leading-relaxed text-sage-800 mb-4">
-                  "{wisdom.quote}"
-                </blockquote>
-                
-                <p className="text-right text-sage-600 italic text-sm mb-6">
-                  — {wisdom.author}
-                </p>
-                
-                <div className="bg-sage-50/50 p-4 rounded-lg border border-sage-100 mb-6">
-                  <h3 className="font-medium mb-2 text-sage-700">Suy ngẫm:</h3>
-                  <p className="text-sage-600">{wisdom.reflection}</p>
-                </div>
-                
-                {showFeedback && (
-                  <div className="mb-6 animate-fade-in">
-                    <p className="text-center text-sm text-sage-600 mb-4">
-                      Lời dạy này có giúp bạn hôm nay không?
-                    </p>
-                    <div className="flex justify-center gap-4">
-                      {FEEDBACK_OPTIONS.map((option) => (
-                        <button
-                          key={option.value}
-                          onClick={() => handleFeedback(option.value, option.positive)}
-                          className={`flex flex-col items-center p-2 rounded-lg transition-all ${
-                            selectedFeedback === option.value 
-                              ? 'bg-sage-100 scale-110' 
-                              : 'hover:bg-sage-50'
-                          }`}
-                        >
-                          <span className="text-2xl mb-1">{option.emoji}</span>
-                          <span className="text-xs text-sage-600">{option.label}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                
-                {showEarlyUserInvite && (
-                  <div className="mb-6 bg-sage-50 p-4 rounded-lg border border-sage-100 animate-fade-in">
-                    <p className="text-sm text-sage-700 mb-3">
-                      Bạn muốn góp ý để cải thiện app Hỏi Phật? Tham gia nhóm Facebook dành cho những người dùng đầu tiên 💬
-                    </p>
-                    <div className="flex justify-center">
-                      <a 
-                        href="https://m.me/j/AbbtegYf3SbXf4k2/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Button 
-                          variant="outline" 
-                          className="bg-white border-sage-200"
-                        >
-                          <MessageCircle className="h-4 w-4 mr-2" />
-                          Vào nhóm Early Users
-                        </Button>
-                      </a>
-                    </div>
-                  </div>
-                )}
-                
-                <div className="flex gap-3">
-                  <Button 
-                    variant="outline" 
-                    className="flex-1"
-                    onClick={resetWisdom}
-                  >
-                    <RefreshCw className="h-4 w-4 mr-2" />
-                    Hỏi lại
-                  </Button>
-                  <Button 
-                    className="flex-1"
-                    onClick={saveWisdom}
-                  >
-                    <ThumbsUp className="h-4 w-4 mr-2" />
-                    Lưu lại
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </>
-        ) : (
-          <>
-            <div className="text-center my-8">
-              <h2 className="font-serif text-2xl text-sage-800 mb-4">
-                Điều gì đang ở trong tâm trí bạn?
-              </h2>
-              <p className="text-sage-600">
-                Chọn ý định để nhận lời dạy phù hợp
+            <CardContent className="p-6 relative z-10">
+              <div className="flex justify-end mb-2">
+                <span className="text-xs px-3 py-1 bg-sage-100 text-sage-600 rounded-full">
+                  {INTENTS.find(i => i.value === selectedIntent)?.label || 'Bình yên'}
+                </span>
+              </div>
+              
+              <blockquote className="font-serif text-xl leading-relaxed text-sage-800 mb-4">
+                "{wisdom.quote}"
+              </blockquote>
+              
+              <p className="text-right text-sage-600 italic text-sm mb-6">
+                — {wisdom.author}
               </p>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              {INTENTS.map(intent => (
-                <Button 
-                  key={intent.value}
-                  variant={selectedIntent === intent.value ? "default" : "outline"}
-                  className={`h-24 flex flex-col gap-2 ${
-                    selectedIntent === intent.value 
-                    ? "bg-primary text-white" 
-                    : "hover:bg-sage-50 border-sage-200"
-                  }`}
-                  onClick={() => setSelectedIntent(intent.value)}
-                >
-                  <span className="text-2xl">{intent.emoji}</span>
-                  <span>{intent.label}</span>
-                </Button>
-              ))}
-            </div>
-            
-            <Button 
-              size="lg"
-              className="mt-8 w-full py-6 text-lg font-medium"
-              onClick={handleAskBuddha}
-              disabled={isAsking}
-            >
-              {isAsking ? (
-                <>
-                  <div className="lotus-loader mr-2">🪷</div>
-                  Đang hỏi...
-                </>
-              ) : (
-                <>
-                  Hỏi Phật
-                  <ChevronRight className="h-5 w-5 ml-1" />
-                </>
+              
+              <div className="bg-sage-50/50 p-4 rounded-lg border border-sage-100 mb-6">
+                <h3 className="font-medium mb-2 text-sage-700">Suy ngẫm:</h3>
+                <p className="text-sage-600">{wisdom.reflection}</p>
+              </div>
+              
+              {showFeedback && (
+                <div className="mb-6 animate-fade-in">
+                  <p className="text-center text-sm text-sage-600 mb-4">
+                    Lời dạy này có giúp bạn hôm nay không?
+                  </p>
+                  <div className="flex justify-center gap-4">
+                    {FEEDBACK_OPTIONS.map((option) => (
+                      <button
+                        key={option.value}
+                        onClick={() => handleFeedback(option.value, option.positive)}
+                        className={`flex flex-col items-center p-2 rounded-lg transition-all ${
+                          selectedFeedback === option.value 
+                            ? 'bg-sage-100 scale-110' 
+                            : 'hover:bg-sage-50'
+                        }`}
+                      >
+                        <span className="text-2xl mb-1">{option.emoji}</span>
+                        <span className="text-xs text-sage-600">{option.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
               )}
-            </Button>
-          </>
+              
+              {showEarlyUserInvite && (
+                <div className="mb-6 bg-sage-50 p-4 rounded-lg border border-sage-100 animate-fade-in">
+                  <p className="text-sm text-sage-700 mb-3">
+                    Bạn muốn góp ý để cải thiện app Hỏi Phật? Tham gia nhóm Facebook dành cho những người dùng đầu tiên 💬
+                  </p>
+                  <div className="flex justify-center">
+                    <a 
+                      href="https://m.me/j/AbbtegYf3SbXf4k2/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Button 
+                        variant="outline" 
+                        className="bg-white border-sage-200"
+                      >
+                        <MessageCircle className="h-4 w-4 mr-2" />
+                        Vào nhóm Early Users
+                      </Button>
+                    </a>
+                  </div>
+                </div>
+              )}
+              
+              <div className="flex gap-3">
+                <Button 
+                  variant="outline" 
+                  className="flex-1"
+                  onClick={resetWisdom}
+                >
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Hỏi lại
+                </Button>
+                <Button 
+                  className="flex-1"
+                  onClick={saveWisdom}
+                >
+                  <ThumbsUp className="h-4 w-4 mr-2" />
+                  Lưu lại
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="text-center my-8">
+            <h2 className="font-serif text-2xl text-sage-800 mb-4">
+              Điều gì đang ở trong tâm trí bạn?
+            </h2>
+            <p className="text-sage-600">
+              Chọn ý định để nhận lời dạy phù hợp
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4">
+            {INTENTS.map(intent => (
+              <Button 
+                key={intent.value}
+                variant={selectedIntent === intent.value ? "default" : "outline"}
+                className={`h-24 flex flex-col gap-2 ${
+                  selectedIntent === intent.value 
+                  ? "bg-primary text-white" 
+                  : "hover:bg-sage-50 border-sage-200"
+                }`}
+                onClick={() => setSelectedIntent(intent.value)}
+              >
+                <span className="text-2xl">{intent.emoji}</span>
+                <span>{intent.label}</span>
+              </Button>
+            ))}
+          </div>
+          
+          <Button 
+            size="lg"
+            className="mt-8 w-full py-6 text-lg font-medium"
+            onClick={handleAskBuddha}
+            disabled={isAsking}
+          >
+            {isAsking ? (
+              <>
+                <div className="lotus-loader mr-2">🪷</div>
+                Đang hỏi...
+              </>
+            ) : (
+              <>
+                Hỏi Phật
+                <ChevronRight className="h-5 w-5 ml-1" />
+              </>
+            )}
+          </Button>
         )}
       </main>
       
-      {/* Footer */}
       <footer className="p-4 text-center text-sm text-sage-500">
         <p>Mỗi ngày một lời Phật dạy</p>
       </footer>
