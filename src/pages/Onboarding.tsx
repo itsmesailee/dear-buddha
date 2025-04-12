@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -36,6 +36,15 @@ const Onboarding = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   
+  // Check if onboarding was already completed
+  useEffect(() => {
+    const intent = localStorage.getItem('hoiphat_intent');
+    if (intent) {
+      // If onboarding was completed, redirect to home
+      navigate('/');
+    }
+  }, [navigate]);
+  
   const handleNext = () => {
     if (currentScreen < OnboardingScreens.length - 1) {
       setCurrentScreen(currentScreen + 1);
@@ -53,6 +62,13 @@ const Onboarding = () => {
       // Navigate to home
       navigate('/');
     }
+  };
+
+  const handleSkip = () => {
+    // Set default values
+    localStorage.setItem('hoiphat_intent', 'calm');
+    localStorage.setItem('hoiphat_reminders', 'false');
+    navigate('/');
   };
   
   const isLastScreen = currentScreen === OnboardingScreens.length - 1;
@@ -146,7 +162,7 @@ const Onboarding = () => {
         {!isLastScreen && (
           <button 
             className="text-sage-500 text-sm mt-4 mx-auto block hover:text-sage-700"
-            onClick={() => navigate('/')}
+            onClick={handleSkip}
           >
             Bỏ qua
           </button>

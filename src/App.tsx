@@ -39,8 +39,8 @@ const App = () => {
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={hasCompletedOnboarding ? <Home /> : <Navigate to="/onboarding" />} />
-            <Route path="/onboarding" element={<Onboarding />} />
+            <Route path="/" element={hasCompletedOnboarding ? <Home /> : <Navigate to="/onboarding" replace />} />
+            <Route path="/onboarding" element={hasCompletedOnboarding ? <Navigate to="/" replace /> : <Onboarding />} />
             <Route path="/wisdom" element={<Wisdom />} />
             <Route path="/library" element={<Library />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
