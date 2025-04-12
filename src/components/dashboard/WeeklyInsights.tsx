@@ -36,6 +36,12 @@ const WeeklyInsights = () => {
   const [hoveredBar, setHoveredBar] = useState<string | null>(null);
   const [data, setData] = useState(initialData);
 
+  // Transform data to include fill color for visualization
+  const barData = data.map(item => ({
+    ...item,
+    fill: item.name === hoveredBar ? '#ff880a' : '#8fa795'
+  }));
+
   return (
     <div className="bg-white rounded-2xl p-5 shadow-sm border border-sage-100 animate-fade-up [animation-delay:100ms]">
       <h2 className="section-heading">Weekly Insights</h2>
@@ -43,7 +49,7 @@ const WeeklyInsights = () => {
       <div className="pt-2">
         <ResponsiveContainer width="100%" height={180}>
           <BarChart 
-            data={data} 
+            data={barData} 
             margin={{ top: 10, right: 0, left: -20, bottom: 0 }}
             onMouseMove={(e) => {
               if (e.activeTooltipIndex !== undefined) {
@@ -62,14 +68,7 @@ const WeeklyInsights = () => {
             <Bar 
               dataKey="minutes" 
               radius={[4, 4, 0, 0]}
-              fill="#8fa795" // Default color
-              getBar={(bar) => {
-                // Highlight the currently hovered bar
-                if (bar && bar.payload && bar.payload.name === hoveredBar) {
-                  return { ...bar, fill: '#ff880a' }; // saffron-500
-                }
-                return bar; // Keep default fill
-              }}
+              fill={(entry) => entry.fill}
             />
           </BarChart>
         </ResponsiveContainer>
