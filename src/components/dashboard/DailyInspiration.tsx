@@ -45,8 +45,15 @@ const DailyInspiration = () => {
   };
 
   return (
-    <div className="bg-gradient-to-br from-sage-50 to-sage-100 rounded-2xl p-5 shadow-sm border border-sage-200 animate-fade-up">
-      <div className="flex flex-col justify-center items-center py-3">
+    <div className="bg-gradient-to-br from-sage-50 to-sage-100 rounded-2xl p-5 shadow-sm border border-sage-200 animate-fade-up relative overflow-hidden">
+      {/* Rich visual background */}
+      <div className="absolute inset-0 opacity-10 pointer-events-none">
+        <div className="absolute inset-0 bg-repeat bg-center" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M40 10C51.85 10 60 18.15 60 30C60 41.85 51.85 50 40 50C28.15 50 20 41.85 20 30C20 18.15 28.15 10 40 10ZM40 5C25.67 5 15 15.67 15 30C15 44.33 25.67 55 40 55C54.33 55 65 44.33 65 30C65 15.67 54.33 5 40 5Z' fill='%23718c78' fill-opacity='0.2'/%3E%3Cpath d='M40 25C42.76 25 45 27.24 45 30C45 32.76 42.76 35 40 35C37.24 35 35 32.76 35 30C35 27.24 37.24 25 40 25Z' fill='%23b38c65' fill-opacity='0.2'/%3E%3C/svg%3E")`
+        }}></div>
+      </div>
+
+      <div className="flex flex-col justify-center items-center py-3 relative z-10">
         <div className="w-16 h-16 mb-3">
           <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full text-saffron-300">
             <path d="M30 55C43.8071 55 55 43.8071 55 30C55 16.1929 43.8071 5 30 5C16.1929 5 5 16.1929 5 30C5 43.8071 16.1929 55 30 55Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -58,7 +65,7 @@ const DailyInspiration = () => {
           </svg>
         </div>
 
-        <blockquote className={`text-center transition-opacity duration-300 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
+        <blockquote className={`text-center transition-opacity duration-300 glass-quote p-5 rounded-lg ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
           <p className="font-serif text-xl text-sage-800 mb-3">"{quote.text}"</p>
           <footer className="text-saffron-600 font-medium">— {quote.author}</footer>
         </blockquote>

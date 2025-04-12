@@ -6,6 +6,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { BookMarked, RefreshCw, ChevronRight, ThumbsUp, MessageCircle } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { generateBuddhistWisdom } from '@/lib/wisdom';
+import BreathingAnimation from '@/components/meditation/BreathingAnimation';
+import { playMindfulnessBell } from '@/utils/audioUtils';
 
 const INTENTS = [
   { value: "calm", label: "Bình yên", emoji: "😌" },
@@ -36,6 +38,10 @@ const Home = () => {
   const [showEarlyUserInvite, setShowEarlyUserInvite] = useState(false);
   const [usageCount, setUsageCount] = useState(0);
   
+  // New states for breathing animation
+  const [showBreathingPrompt, setShowBreathingPrompt] = useState(false);
+  const [showBreathingAnimation, setShowBreathingAnimation] = useState(false);
+  
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -45,7 +51,7 @@ const Home = () => {
     setUsageCount(storedCount ? parseInt(storedCount, 10) : 0);
   }, []);
 
-  const handleAskBuddha = () => {
+  const handleAskBuddha = async () => {
     if (!selectedIntent) {
       toast({
         title: "Vui lòng chọn ý định",
@@ -60,18 +66,31 @@ const Home = () => {
     setSelectedFeedback(null);
     setShowEarlyUserInvite(false);
     
+    // Show breathing prompt
+    setShowBreathingPrompt(true);
+  };
+  
+  const startBreathingAnimation = () => {
+    setShowBreathingPrompt(false);
+    setShowBreathingAnimation(true);
+    
+    // Play the mindfulness bell sound
+    playMindfulnessBell();
+  };
+  
+  const handleBreathingComplete = () => {
+    setShowBreathingAnimation(false);
+    
     // Increment usage count
     const newCount = usageCount + 1;
     setUsageCount(newCount);
     localStorage.setItem('hoiphat_usage_count', newCount.toString());
     
-    // Simulate API delay
-    setTimeout(() => {
-      const generatedWisdom = generateBuddhistWisdom(selectedIntent);
-      setWisdom(generatedWisdom);
-      setIsAsking(false);
-      setShowFeedback(true);
-    }, 1500);
+    // Generate wisdom after breathing exercise
+    const generatedWisdom = generateBuddhistWisdom(selectedIntent!);
+    setWisdom(generatedWisdom);
+    setIsAsking(false);
+    setShowFeedback(true);
   };
   
   const saveWisdom = () => {
@@ -134,10 +153,45 @@ const Home = () => {
       </header>
       
       <main className="flex-1 p-4 flex flex-col gap-6">
-        {wisdom ? (
+        {showBreathingPrompt ? (
+          <div className="animate-fade-in text-center my-10">
+            <h2 className="font-serif text-2xl text-sage-800 mb-6">
+              Bạn có muốn dừng lại một nhịp thở trước khi nhận lời Phật dạy hôm nay?
+            </h2>
+            <Button 
+              size="lg" 
+              className="w-full py-6"
+              onClick={startBreathingAnimation}
+            >
+              Bắt đầu thở
+            </Button>
+          </div>
+        ) : showBreathingAnimation ? (
+          <div className="animate-fade-in flex flex-col items-center justify-center my-10">
+            <BreathingAnimation 
+              duration={5000}
+              onComplete={handleBreathingComplete}
+            />
+          </div>
+        ) : wisdom ? (
           <>
-            <Card className="glass-card animate-fade-in">
-              <CardContent className="p-6">
+            <Card className="glass-card animate-fade-in relative overflow-hidden">
+              {/* Rich visual background for the wisdom card */}
+              <div className="absolute inset-0 opacity-10 pointer-events-none">
+                <div className="absolute inset-0 bg-repeat bg-center" style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M50 5C74.85 5 95 25.15 95 50C95 74.85 74.85 95 50 95C25.15 95 5 74.85 5 50C5 25.15 25.15 5 50 5ZM50 15C30.67 15 15 30.67 15 50C15 69.33 30.67 85 50 85C69.33 85 85 69.33 85 50C85 30.67 69.33 15 50 15Z' fill='%23b38c65' fill-opacity='0.15'/%3E%3C/svg%3E")`
+                }}></div>
+                
+                {/* Subtle lotus pattern */}
+                <div className="absolute top-0 right-0 w-32 h-32 opacity-20">
+                  <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M50 10C65 10 75 25 75 40C75 55 65 70 50 70C35 70 25 55 25 40C25 25 35 10 50 10Z" fill="#b38c65" fillOpacity="0.3"/>
+                    <path d="M50 20C60 20 65 30 65 40C65 50 60 60 50 60C40 60 35 50 35 40C35 30 40 20 50 20Z" fill="#b38c65" fillOpacity="0.3"/>
+                  </svg>
+                </div>
+              </div>
+
+              <CardContent className="p-6 relative z-10">
                 <div className="flex justify-end mb-2">
                   <span className="text-xs px-3 py-1 bg-sage-100 text-sage-600 rounded-full">
                     {INTENTS.find(i => i.value === selectedIntent)?.label || 'Bình yên'}

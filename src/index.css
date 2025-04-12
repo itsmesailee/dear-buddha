@@ -64,6 +64,10 @@
     @apply bg-white/80 backdrop-blur-lg border border-white/30 shadow-sm rounded-2xl transition-all duration-300 hover:shadow-md hover:bg-white/90;
   }
 
+  .glass-quote {
+    @apply bg-white/60 backdrop-blur-sm border border-white/30 shadow-sm;
+  }
+
   .section-heading {
     @apply font-serif text-2xl font-medium text-sage-800 mb-4;
   }
