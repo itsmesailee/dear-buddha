@@ -68,7 +68,7 @@ const WeeklyInsights = () => {
             <Bar 
               dataKey="minutes" 
               radius={[4, 4, 0, 0]}
-              fill={(entry) => entry.fill}
+              fill="#8fa795" // Use a single string color as the base
             />
           </BarChart>
         </ResponsiveContainer>
