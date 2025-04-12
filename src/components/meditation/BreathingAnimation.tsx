@@ -12,8 +12,8 @@ interface BreathingAnimationProps {
 type BreathPhase = 'inhale' | 'inhaleHold' | 'exhale' | 'exhaleHold';
 
 const BreathingAnimation = ({ 
-  duration = 16000, // Default to 16s for a complete cycle (4s per phase)
-  rounds = 2, // Default to 2 rounds
+  duration = 24000, // Default to 24s for a complete cycle (6s per phase)
+  rounds = 1, // Default to 1 round
   onComplete 
 }: BreathingAnimationProps) => {
   const [progress, setProgress] = useState(0);
@@ -173,22 +173,22 @@ const BreathingAnimation = ({
       <div className="flex gap-8 mb-6">
         <div className="text-center">
           <div className={`w-14 h-1 mb-2 rounded-full ${phase === 'inhale' ? 'bg-saffron-500' : 'bg-sage-200'}`}></div>
-          <p className="text-xs text-sage-600">4s</p>
+          <p className="text-xs text-sage-600">6s</p>
           <p className={`text-sm ${phase === 'inhale' ? 'text-saffron-600 font-medium' : 'text-sage-500'}`}>Hít vào</p>
         </div>
         <div className="text-center">
           <div className={`w-14 h-1 mb-2 rounded-full ${phase === 'inhaleHold' ? 'bg-saffron-500' : 'bg-sage-200'}`}></div>
-          <p className="text-xs text-sage-600">4s</p>
+          <p className="text-xs text-sage-600">6s</p>
           <p className={`text-sm ${phase === 'inhaleHold' ? 'text-saffron-600 font-medium' : 'text-sage-500'}`}>Giữ</p>
         </div>
         <div className="text-center">
           <div className={`w-14 h-1 mb-2 rounded-full ${phase === 'exhale' ? 'bg-saffron-500' : 'bg-sage-200'}`}></div>
-          <p className="text-xs text-sage-600">4s</p>
+          <p className="text-xs text-sage-600">6s</p>
           <p className={`text-sm ${phase === 'exhale' ? 'text-saffron-600 font-medium' : 'text-sage-500'}`}>Thở ra</p>
         </div>
         <div className="text-center">
           <div className={`w-14 h-1 mb-2 rounded-full ${phase === 'exhaleHold' ? 'bg-saffron-500' : 'bg-sage-200'}`}></div>
-          <p className="text-xs text-sage-600">4s</p>
+          <p className="text-xs text-sage-600">6s</p>
           <p className={`text-sm ${phase === 'exhaleHold' ? 'text-saffron-600 font-medium' : 'text-sage-500'}`}>Giữ</p>
         </div>
       </div>

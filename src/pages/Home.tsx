@@ -157,8 +157,8 @@ const Home = () => {
         ) : showBreathingAnimation ? (
           <div className="animate-fade-in flex flex-col items-center justify-center my-10 bg-gradient-to-b from-sage-50 to-sage-100 p-8 rounded-3xl shadow-sm">
             <BreathingAnimation 
-              duration={16000}
-              rounds={2}
+              duration={24000}
+              rounds={1}
               onComplete={handleBreathingComplete}
             />
           </div>
