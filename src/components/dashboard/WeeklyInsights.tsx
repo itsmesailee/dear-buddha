@@ -62,12 +62,13 @@ const WeeklyInsights = () => {
             <Bar 
               dataKey="minutes" 
               radius={[4, 4, 0, 0]}
-              fill={(data, index) => {
-                // Use a gradient or highlight the currently hovered bar
-                if (data.name === hoveredBar) {
-                  return '#ff880a'; // saffron-500
+              fill="#8fa795" // Default color
+              getBar={(bar) => {
+                // Highlight the currently hovered bar
+                if (bar && bar.payload && bar.payload.name === hoveredBar) {
+                  return { ...bar, fill: '#ff880a' }; // saffron-500
                 }
-                return '#8fa795'; // sage-400
+                return bar; // Keep default fill
               }}
             />
           </BarChart>
