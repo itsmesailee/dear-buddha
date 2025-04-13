@@ -12,7 +12,9 @@ export interface JournalEntry {
 
 export interface BuddhistWisdom {
   quote: string;
-  context: string;
-  source: string;
+  author: string;
+  reflection: string;
+  context?: string;
+  source?: string;
   sourceLink?: string;
 }

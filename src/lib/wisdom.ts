@@ -1,15 +1,4 @@
-// This file remains mostly unchanged, but we'll extend it to support more wisdom types
-
-export type Emotion = 'peaceful' | 'happy' | 'neutral' | 'sad' | 'anxious';
-
-export interface BuddhistWisdom {
-  quote: string;
-  author: string;
-  reflection: string;
-  context?: string;
-  source?: string;
-  sourceLink?: string;
-}
+import { BuddhistWisdom } from '@/types/journal';
 
 // Sample Buddhist quotes
 const BUDDHIST_QUOTES = {
@@ -129,7 +118,6 @@ const BUDDHIST_QUOTES = {
   ],
 };
 
-// Function to generate wisdom based on intent or emotion
 export const generateBuddhistWisdom = (intentOrEmotion: string): BuddhistWisdom => {
   let quotes = BUDDHIST_QUOTES.peaceful; // Default to peaceful quotes
   
