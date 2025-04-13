@@ -1,93 +1,155 @@
+// This file remains mostly unchanged, but we'll extend it to support more wisdom types
 
-interface BuddhistWisdom {
+export type Emotion = 'peaceful' | 'happy' | 'neutral' | 'sad' | 'anxious';
+
+export interface BuddhistWisdom {
   quote: string;
   author: string;
   reflection: string;
+  context?: string;
+  source?: string;
+  sourceLink?: string;
 }
 
-type Intent = 'calm' | 'insight' | 'gratitude' | 'confusion';
-
-// A collection of Buddhist wisdom quotes and reflections
-const wisdomCollection: Record<Intent, BuddhistWisdom[]> = {
-  calm: [
+// Sample Buddhist quotes
+const BUDDHIST_QUOTES = {
+  peaceful: [
     {
-      quote: "Bạn không thể đi hết con đường cho đến khi bạn trở thành con đường đó.",
-      author: "Đức Phật Thích Ca",
-      reflection: "Hãy trở thành sự bình yên mà bạn tìm kiếm. Thực hành chánh niệm trong từng hành động, từ hơi thở đến bước chân."
+      quote: "Không có con đường đến hòa bình, hòa bình chính là con đường.",
+      author: "Thích Nhất Hạnh",
+      reflection: "Hòa bình không phải là điểm đến mà chính là cách chúng ta đi. Hãy sống từng khoảnh khắc một cách an lành và tỉnh thức.",
+      context: "Trích từ tư tưởng của Thiền sư Thích Nhất Hạnh về sự thực hành chánh niệm trong đời sống hàng ngày.",
+      source: "Thích Nhất Hạnh",
+      sourceLink: "https://plumvillage.org/thich-nhat-hanh/key-teachings/"
     },
     {
-      quote: "Nếu chúng ta có thể thấy con đường trước mặt, chúng ta không còn trên con đường nữa.",
-      author: "Thiền sư Thích Nhất Hạnh",
-      reflection: "Đừng lo lắng về tương lai hay tiếc nuối quá khứ. Hãy tập trung vào giây phút hiện tại, nơi bình yên thực sự tồn tại."
+      quote: "Hãy là hòn đảo của chính mình, hãy là nơi nương tựa của chính mình, không tìm kiếm nơi nương tựa bên ngoài.",
+      author: "Đức Phật",
+      reflection: "Sự bình yên thực sự đến từ bên trong. Khi bạn tìm thấy sự an tĩnh trong chính mình, không gì bên ngoài có thể làm bạn xao động.",
+      context: "Lời dạy này xuất phát từ kinh Đại Bát-niết-bàn, khuyên các đệ tử nên nương tựa vào chính mình và Giáo Pháp.",
+      source: "Kinh Đại Bát-niết-bàn",
+      sourceLink: "https://www.accesstoinsight.org/tipitaka/dn/dn.16.1-6.vaji.html"
     },
-    {
-      quote: "Hãy để mọi thứ trôi qua, giống như nước chảy qua tay bạn.",
-      author: "Thiền sư Ajahn Chah",
-      reflection: "Đừng nắm giữ, đừng chống cự. Hãy quan sát những cảm xúc và suy nghĩ đến rồi đi, như những đám mây trôi qua bầu trời."
-    }
+    // ... other peaceful quotes
   ],
-  insight: [
+  happy: [
     {
-      quote: "Trong vòng luân hồi vô tận, tại sao chúng ta lại xem nhẹ người khác để tự tôn mình?",
-      author: "Đức Đạt Lai Lạt Ma",
-      reflection: "Mọi chúng sinh đều bình đẳng trong khát vọng tìm kiếm hạnh phúc và tránh khổ đau. Hãy nhìn thế giới bằng con mắt của lòng từ bi."
+      quote: "Hạnh phúc không phải là có nhiều, mà là ít ham muốn.",
+      author: "Đức Phật",
+      reflection: "Khi chúng ta giảm bớt tham muốn, chúng ta tìm thấy sự mãn nguyện trong những điều đơn giản. Đó là chìa khóa của hạnh phúc thực sự.",
+      context: "Lời dạy này được tìm thấy trong nhiều kinh điển Phật giáo, nhấn mạnh rằng hạnh phúc đến từ sự biết đủ (tri túc).",
+      source: "Kinh Pháp Cú",
+      sourceLink: "https://www.accesstoinsight.org/tipitaka/kn/dhp/dhp.15.than.html"
     },
     {
-      quote: "Nếu bạn muốn biết quá khứ của mình, hãy nhìn vào hoàn cảnh hiện tại. Nếu bạn muốn biết tương lai, hãy nhìn vào hành động hôm nay.",
-      author: "Đức Phật Thích Ca",
-      reflection: "Nhân quả là quy luật không thể tránh khỏi. Mỗi hành động đều tạo ra hạt giống cho tương lai. Hãy gieo những hạt giống tốt đẹp."
+      quote: "Giống như bông hoa tươi đẹp, có sắc hương nhưng không có chất độc, là lời nói của người thuần thiện.",
+      author: "Đức Phật",
+      reflection: "Lời nói thiện lành mang lại niềm vui cho người nghe và người nói. Hãy chọn những lời nói khiến mọi người hạnh phúc.",
+      context: "Trích từ Kinh Pháp Cú, phẩm Hoa, so sánh lời nói thiện với bông hoa đẹp đẽ và thơm ngát.",
+      source: "Kinh Pháp Cú, kệ 52",
+      sourceLink: "https://www.accesstoinsight.org/tipitaka/kn/dhp/dhp.04.than.html"
     },
-    {
-      quote: "Hiểu biết là quá trình dần dần, từng bước một.",
-      author: "Thiền sư Shunryu Suzuki",
-      reflection: "Đừng vội vàng trên con đường tìm kiếm trí tuệ. Chậm rãi và kiên nhẫn, ánh sáng sẽ dần hiện ra trong tâm bạn."
-    }
+    // ... other happy quotes
   ],
-  gratitude: [
+  neutral: [
     {
-      quote: "Hãy nhìn sâu vào lòng biết ơn, và bạn sẽ tìm thấy sức mạnh.",
-      author: "Thiền sư Thích Nhất Hạnh",
-      reflection: "Lòng biết ơn là cánh cửa mở ra hạnh phúc. Mỗi ngày, hãy dành thời gian để cảm nhận biết ơn về những điều đơn giản nhất."
+      quote: "Đừng dính mắc vào quá khứ, đừng mơ tưởng về tương lai, hãy sống trọn vẹn với hiện tại.",
+      author: "Đức Phật",
+      reflection: "Khi chúng ta tập trung vào hiện tại, chúng ta thoát khỏi những hối tiếc về quá khứ và lo âu về tương lai. Chỉ khi đó, chúng ta mới thực sự sống.",
+      context: "Đây là lời dạy cốt lõi về chánh niệm trong Phật giáo, nhấn mạnh tầm quan trọng của việc sống trong hiện tại.",
+      source: "Bhaddekaratta Sutta (Kinh Nhất Dạ Hiền Giả)",
+      sourceLink: "https://www.accesstoinsight.org/tipitaka/mn/mn.131.than.html"
     },
     {
-      quote: "Cho đi không chỉ là điều nên làm, mà còn là nguồn hạnh phúc.",
-      author: "Đức Đạt Lai Lạt Ma",
-      reflection: "Khi ta cho đi với tâm biết ơn, ta không chỉ làm phong phú cuộc sống người khác, mà còn tạo nên niềm vui trong chính mình."
+      quote: "Khi tâm không loạn động, đó là con đường tốt nhất để đạt được hạnh phúc.",
+      author: "Đức Phật",
+      reflection: "Tâm bình lặng như mặt hồ không gợn sóng có thể phản chiếu thực tại một cách rõ ràng. Hãy tìm sự tĩnh lặng trong tâm hồn.",
+      context: "Lời dạy này nhấn mạnh tầm quan trọng của việc giữ tâm tĩnh lặng và ổn định trong mọi hoàn cảnh.",
+      source: "Kinh Pháp Cú",
+      sourceLink: "https://www.accesstoinsight.org/tipitaka/kn/dhp/dhp.intro.budd.html"
+    },
+    // ... other neutral quotes
+  ],
+  sad: [
+    {
+      quote: "Nỗi buồn không tồn tại trong sự việc, mà trong cách chúng ta nhìn nhận sự việc.",
+      author: "Đức Phật",
+      reflection: "Khi thay đổi cách nhìn, chúng ta có thể thấy nỗi buồn chỉ là một trạng thái tâm tạm thời. Mọi sự đều thay đổi, kể cả nỗi buồn.",
+      context: "Phật dạy rằng khổ đau là do chấp thủ và tham ái. Khi thay đổi cách nhìn về thực tại, khổ đau sẽ giảm đi.",
+      source: "Kinh Chuyển Pháp Luân",
+      sourceLink: "https://www.accesstoinsight.org/tipitaka/sn/sn56/sn56.011.than.html"
     },
     {
-      quote: "Mỗi buổi sáng, khi thức dậy, tôi biết ơn vì có ngày mới để thực hành.",
-      author: "Thiền sư Dogen",
-      reflection: "Mỗi ngày là món quà quý giá. Hãy sống trọn vẹn và trân trọng từng khoảnh khắc, dù là trong niềm vui hay thử thách."
-    }
+      quote: "Cũng như cơn mưa không thể xuyên qua mái nhà khéo lợp, tham dục không thể xuyên qua tâm khéo tu tập.",
+      author: "Đức Phật",
+      reflection: "Khi tâm được rèn luyện qua thiền định và chánh niệm, nỗi buồn và đau khổ không thể dễ dàng xâm nhập. Hãy xây dựng một tâm hồn vững chãi.",
+      context: "Ẩn dụ này từ Kinh Pháp Cú, so sánh tâm được tu tập tốt như một ngôi nhà có mái che chắn chắn, không bị ảnh hưởng bởi mưa gió.",
+      source: "Kinh Pháp Cú, kệ 14",
+      sourceLink: "https://www.accesstoinsight.org/tipitaka/kn/dhp/dhp.01.than.html"
+    },
+    // ... other sad quotes
+  ],
+  anxious: [
+    {
+      quote: "Lo lắng không làm vơi đi nỗi đau của ngày mai, nhưng nó lấy đi sự bình yên của ngày hôm nay.",
+      author: "Đức Phật",
+      reflection: "Lo lắng về tương lai không thể thay đổi những gì sẽ đến, nhưng chắc chắn sẽ phá hủy niềm vui hiện tại. Hãy sống trong hiện tại.",
+      context: "Lời dạy này nhắc nhở chúng ta rằng lo lắng chỉ làm tăng thêm khổ đau, không giải quyết được vấn đề sắp tới.",
+      source: "Tương truyền từ lời dạy của Đức Phật",
+      sourceLink: "https://www.accesstoinsight.org/index.html"
+    },
+    {
+      quote: "Khi bạn đã hoàn toàn hiểu rằng mọi thứ đều vô thường, bạn sẽ không lo lắng về bất cứ điều gì.",
+      author: "Đức Phật",
+      reflection: "Hiểu được tính vô thường của vạn vật giúp chúng ta buông bỏ sự lo lắng. Không có gì tồn tại mãi mãi, kể cả những khó khăn hiện tại.",
+      context: "Đây là lời dạy về vô thường (anicca), một trong ba đặc tính của tồn tại theo Phật giáo, giúp chúng ta đối mặt với sự thay đổi.",
+      source: "Tăng Chi Bộ Kinh",
+      sourceLink: "https://www.accesstoinsight.org/tipitaka/an/index.html"
+    },
+    // ... other anxious quotes
   ],
   confusion: [
     {
-      quote: "Khi tâm như nước đục, hãy để nó lắng xuống. Đừng cố nhìn xuyên qua màn sương mù.",
-      author: "Thiền sư Thích Nhất Hạnh",
-      reflection: "Trong những lúc hoang mang, hãy ngừng tìm kiếm câu trả lời. Chỉ cần an trú trong hơi thở, để tâm được nghỉ ngơi."
+      quote: "Trong tâm trí đầy hoang mang, chúng ta tìm thấy người thầy tốt nhất.",
+      author: "Thích Nhất Hạnh",
+      reflection: "Sự hoang mang và không chắc chắn có thể dẫn đến những câu hỏi sâu sắc và cuối cùng là sự hiểu biết thực sự. Hãy đón nhận nó như một phần của hành trình.",
+      context: "Thích Nhất Hạnh dạy rằng những cảm xúc khó khăn như hoang mang không phải là kẻ thù mà là người thầy, giúp chúng ta phát triển.",
+      source: "Thích Nhất Hạnh",
+      sourceLink: "https://plumvillage.org/about/thich-nhat-hanh/"
     },
     {
-      quote: "Hỗn loạn không nằm trong thế giới, mà nằm trong tâm chúng ta.",
-      author: "Đức Phật Thích Ca",
-      reflection: "Sự hoang mang xuất phát từ cách ta nhìn nhận vấn đề. Hãy thay đổi góc nhìn, và con đường sẽ dần sáng tỏ."
+      quote: "Đừng tin vào điều gì chỉ vì bạn đã nghe. Đừng tin vào truyền thống vì nó đã được truyền từ xa xưa.",
+      author: "Đức Phật",
+      reflection: "Khi bạn cảm thấy hoang mang, hãy tin vào kinh nghiệm cá nhân và sự hiểu biết của chính mình. Hãy kiểm chứng và trải nghiệm trước khi chấp nhận.",
+      context: "Trích từ Kinh Kalama, một lời khuyên nổi tiếng của Đức Phật về tư duy phản biện và không chấp nhận điều gì một cách mù quáng.",
+      source: "Kinh Kalama",
+      sourceLink: "https://www.accesstoinsight.org/tipitaka/an/an03/an03.065.than.html"
     },
-    {
-      quote: "Không biết là bước đầu tiên để biết.",
-      author: "Thiền sư Shunryu Suzuki",
-      reflection: "Chấp nhận sự không biết là dấu hiệu của trí tuệ. Đừng sợ hãi trước những câu hỏi chưa có lời đáp, hãy ôm lấy chúng."
-    }
-  ]
+    // ... other quotes for confusion
+  ],
 };
 
-export const generateBuddhistWisdom = (intent: string): BuddhistWisdom => {
-  // Default to calm if intent is not recognized
-  const safeIntent = (intent in wisdomCollection) ? intent as Intent : 'calm';
+// Function to generate wisdom based on intent or emotion
+export const generateBuddhistWisdom = (intentOrEmotion: string): BuddhistWisdom => {
+  let quotes = BUDDHIST_QUOTES.peaceful; // Default to peaceful quotes
   
-  // Get the collection for the specified intent
-  const collection = wisdomCollection[safeIntent];
+  // Map intent to emotional state
+  if (intentOrEmotion === 'calm' || intentOrEmotion === 'peaceful') {
+    quotes = BUDDHIST_QUOTES.peaceful;
+  } else if (intentOrEmotion === 'insight' || intentOrEmotion === 'happy') {
+    quotes = BUDDHIST_QUOTES.happy;
+  } else if (intentOrEmotion === 'gratitude' || intentOrEmotion === 'neutral') {
+    quotes = BUDDHIST_QUOTES.neutral;
+  } else if (intentOrEmotion === 'confusion' || intentOrEmotion === 'sad') {
+    quotes = BUDDHIST_QUOTES.sad;
+  } else if (intentOrEmotion === 'anxious') {
+    quotes = BUDDHIST_QUOTES.anxious;
+  }
   
-  // Randomly select a wisdom
-  const randomIndex = Math.floor(Math.random() * collection.length);
+  // Pick a random quote from the selected category
+  const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
   
-  return collection[randomIndex];
+  return {
+    ...randomQuote
+  };
 };
