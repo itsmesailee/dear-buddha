@@ -2,9 +2,16 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Heart, MessageCircle, ListTodo } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Mic } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import ActionInput from './ActionInput';
 
 interface WisdomDisplayProps {
@@ -34,7 +41,9 @@ const WisdomDisplay = ({
   setReaction,
 }: WisdomDisplayProps) => {
   const [showFeedback, setShowFeedback] = useState(false);
+  const [feedbackType, setFeedbackType] = useState<'voice' | 'text' | null>(null);
   const [feedbackText, setFeedbackText] = useState("");
+  const [isRecording, setIsRecording] = useState(false);
 
   return (
     <Card className="glass-card animate-fade-in relative overflow-hidden">
@@ -77,48 +86,78 @@ const WisdomDisplay = ({
         
         <div className="flex items-center justify-between gap-3">
           <Button 
-            variant="outline" 
-            className="flex-1"
+            variant="ghost"
+            size="icon"
+            className="text-sage-700 hover:text-sage-800 hover:bg-sage-50 text-lg"
             onClick={onAskAgain}
           >
-            Hỏi lại
+            🔁
           </Button>
           
           <Button 
             variant="ghost"
             size="icon"
-            className="text-red-400 hover:text-red-500 hover:bg-red-50"
+            className="text-sage-700 hover:text-sage-800 hover:bg-sage-50 text-lg"
             onClick={onSave}
           >
-            <Heart className="h-5 w-5" />
+            🔖
           </Button>
-          
+
           <Button 
-            className="flex-1"
+            variant="ghost"
+            size="icon"
+            className="text-sage-700 hover:text-sage-800 hover:bg-sage-50 text-lg"
             onClick={() => setShowFeedback(!showFeedback)}
           >
-            <MessageCircle className="mr-2 h-4 w-4" />
-            Phản hồi
+            💬
           </Button>
 
           <Button
-            variant="outline"
-            className="flex-1"
+            variant="ghost"
+            size="icon"
+            className="text-sage-700 hover:text-sage-800 hover:bg-sage-50 text-lg"
             onClick={() => setShowTodoInput(!showTodoInput)}
           >
-            <ListTodo className="mr-2 h-4 w-4" />
-            Tạo việc cần làm
+            📌
           </Button>
         </div>
         
         {showFeedback && (
           <div className="mt-6 animate-fade-in space-y-4">
-            <Textarea 
-              placeholder="Chia sẻ cảm nghĩ của bạn..."
-              value={feedbackText}
-              onChange={(e) => setFeedbackText(e.target.value)}
-              className="mb-3"
-            />
+            <Select 
+              value={feedbackType || ''} 
+              onValueChange={(value) => setFeedbackType(value as 'voice' | 'text')}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Chọn cách phản hồi" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="voice">Ghi âm cảm nhận</SelectItem>
+                <SelectItem value="text">Viết cảm nhận</SelectItem>
+              </SelectContent>
+            </Select>
+            
+            {feedbackType === 'voice' && (
+              <div className="flex flex-col items-center gap-4">
+                <Button 
+                  variant="outline"
+                  className="w-16 h-16 rounded-full"
+                  onClick={() => setIsRecording(!isRecording)}
+                >
+                  <Mic className={`h-6 w-6 ${isRecording ? 'text-red-500' : ''}`} />
+                </Button>
+                {isRecording && <p className="text-sm text-sage-600">Đang ghi âm...</p>}
+              </div>
+            )}
+            
+            {feedbackType === 'text' && (
+              <Textarea 
+                placeholder="Chia sẻ cảm nghĩ của bạn..."
+                value={feedbackText}
+                onChange={(e) => setFeedbackText(e.target.value)}
+                className="mb-3"
+              />
+            )}
             
             <div className="flex items-center space-x-2">
               <Checkbox 
