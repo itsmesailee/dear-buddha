@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Mic, Heart, MessageCircle, ListTodo } from "lucide-react";
+import { Mic } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { generateBuddhistWisdom } from '@/lib/wisdom';
 import { Textarea } from "@/components/ui/textarea";

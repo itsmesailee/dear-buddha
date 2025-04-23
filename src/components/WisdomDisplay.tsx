@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Mic } from "lucide-react";
+import { Repeat, Bookmark, MessageSquare, ListTodo, Mic } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -90,8 +90,9 @@ const WisdomDisplay = ({
             size="icon"
             className="text-sage-700 hover:text-sage-800 hover:bg-sage-50 text-lg"
             onClick={onAskAgain}
+            aria-label="Hỏi lại"
           >
-            🔁
+            <Repeat className="h-6 w-6" />
           </Button>
           
           <Button 
@@ -99,8 +100,9 @@ const WisdomDisplay = ({
             size="icon"
             className="text-sage-700 hover:text-sage-800 hover:bg-sage-50 text-lg"
             onClick={onSave}
+            aria-label="Lưu lại"
           >
-            🔖
+            <Bookmark className="h-6 w-6" />
           </Button>
 
           <Button 
@@ -108,8 +110,9 @@ const WisdomDisplay = ({
             size="icon"
             className="text-sage-700 hover:text-sage-800 hover:bg-sage-50 text-lg"
             onClick={() => setShowFeedback(!showFeedback)}
+            aria-label="Phản hồi"
           >
-            💬
+            <MessageSquare className="h-6 w-6" />
           </Button>
 
           <Button
@@ -117,8 +120,9 @@ const WisdomDisplay = ({
             size="icon"
             className="text-sage-700 hover:text-sage-800 hover:bg-sage-50 text-lg"
             onClick={() => setShowTodoInput(!showTodoInput)}
+            aria-label="Tạo việc cần làm"
           >
-            📌
+            <ListTodo className="h-6 w-6" />
           </Button>
         </div>
         
