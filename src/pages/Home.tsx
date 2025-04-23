@@ -1,16 +1,20 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { BookMarked, RefreshCw, ChevronRight, ThumbsUp, MessageCircle, Mic } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { Mic, ChevronRight, ThumbsUp, MessageCircle } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import { generateBuddhistWisdom } from '@/lib/wisdom';
 import { Textarea } from "@/components/ui/textarea";
 import { 
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 
 const INTENTS = [
   { value: "calm", label: "Bình yên", emoji: "😌" },
@@ -18,15 +22,6 @@ const INTENTS = [
   { value: "gratitude", label: "Biết ơn", emoji: "🙏" },
   { value: "confusion", label: "Hoang mang", emoji: "😕" },
 ];
-
-const FEEDBACK_OPTIONS = [
-  { emoji: "🙏", label: "Rất giúp ích", value: "very_helpful", positive: true },
-  { emoji: "😊", label: "Dễ chịu", value: "pleasant", positive: true },
-  { emoji: "😐", label: "Bình thường", value: "neutral", positive: false },
-  { emoji: "😕", label: "Chưa phù hợp", value: "not_helpful", positive: false },
-];
-
-const REACTION_EMOJIS = ["😢", "😮", "😌", "❤️"];
 
 const Home = () => {
   const [selectedIntent, setSelectedIntent] = useState<string | null>(
@@ -36,17 +31,10 @@ const Home = () => {
   const [wisdom, setWisdom] = useState<{
     quote: string;
     author: string;
-    reflection: string;
   } | null>(null);
-  const [showFeedback, setShowFeedback] = useState(false);
-  const [selectedFeedback, setSelectedFeedback] = useState<string | null>(null);
-  const [showEarlyUserInvite, setShowEarlyUserInvite] = useState(false);
   const [usageCount, setUsageCount] = useState(0);
   const [userText, setUserText] = useState("");
-  const [showVoicePopover, setShowVoicePopover] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
-  const [selectedReaction, setSelectedReaction] = useState<string | null>(null);
-  const [showResponseOptions, setShowResponseOptions] = useState(false);
   const [responseType, setResponseType] = useState<'voice' | 'todo' | null>(null);
   const [todoItems, setTodoItems] = useState(Array(5).fill(""));
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -70,11 +58,6 @@ const Home = () => {
     }
     
     setIsAsking(true);
-    setShowFeedback(false);
-    setSelectedFeedback(null);
-    setShowEarlyUserInvite(false);
-    setSelectedReaction(null);
-    setShowResponseOptions(false);
     setResponseType(null);
     
     const newCount = usageCount + 1;
@@ -85,7 +68,6 @@ const Home = () => {
       const generatedWisdom = generateBuddhistWisdom(selectedIntent || 'calm');
       setWisdom(generatedWisdom);
       setIsAsking(false);
-      setShowFeedback(true);
     }, 1500);
   };
 
@@ -93,7 +75,6 @@ const Home = () => {
     setIsRecording(true);
     setTimeout(() => {
       setIsRecording(false);
-      setShowVoicePopover(false);
       toast({
         title: "Ghi âm đã hoàn thành",
         description: "Cảm ơn con đã chia sẻ cảm xúc."
@@ -120,7 +101,7 @@ const Home = () => {
     const savedWisdom = savedWisdomStr ? JSON.parse(savedWisdomStr) : [];
     
     const updatedWisdom = [
-      {...wisdom, savedAt: new Date().toISOString(), intent: selectedIntent, feedback: selectedFeedback},
+      {...wisdom, savedAt: new Date().toISOString(), intent: selectedIntent},
       ...savedWisdom
     ].slice(0, 5);
     
@@ -139,101 +120,35 @@ const Home = () => {
 
   const resetWisdom = () => {
     setWisdom(null);
-    setShowFeedback(false);
-    setSelectedFeedback(null);
-    setShowEarlyUserInvite(false);
-    setSelectedReaction(null);
-    setShowResponseOptions(false);
     setResponseType(null);
-  };
-
-  const handleFeedback = (value: string, isPositive: boolean) => {
-    setSelectedFeedback(value);
-    
-    if (!isPositive || usageCount >= 3) {
-      setShowEarlyUserInvite(true);
-    }
-  };
-
-  const handleShareSocial = (platform: string) => {
-    toast({
-      title: `Đang chia sẻ lên ${platform}...`,
-      description: "Tính năng đang được phát triển."
-    });
   };
 
   return (
     <div className="min-h-screen bg-sage-50 flex flex-col">
       <header className="p-4 flex justify-between items-center">
         <h1 className="text-xl font-serif font-medium text-sage-800">Hỏi Phật</h1>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="text-sage-600"
-          onClick={() => navigate('/wisdom')}
-        >
-          <BookMarked className="h-5 w-5" />
-        </Button>
       </header>
-      
-      <div className="mx-auto mb-4 relative w-40 h-40">
-        <img
-          src="/images/buddha-illustration.png"
-          alt="Buddha under tree"
-          className="w-full h-full object-contain"
-        />
-      </div>
       
       <main className="flex-1 p-4 flex flex-col gap-6">
         {wisdom ? (
-          <Card className="glass-card animate-fade-in relative">
+          <Card className="glass-card animate-fade-in relative overflow-hidden">
             <CardContent className="p-6">
-              <div className="absolute inset-0 opacity-10">
+              <div className="relative w-full h-64 mb-6">
                 <img
-                  src="/images/buddha-illustration.png"
-                  alt="Buddha background"
-                  className="w-full h-full object-contain"
+                  src="/lovable-uploads/caaf6f74-6849-47d2-8482-cbac0192a153.png"
+                  alt="Buddha statue"
+                  className="w-full h-full object-cover rounded-lg"
                 />
-              </div>
-              
-              <div className="relative z-10">
-                <blockquote className="font-serif text-xl leading-relaxed text-sage-800 mb-6 text-center">
-                  "{wisdom.quote}"
-                </blockquote>
-                
-                <div className="flex items-center mb-6">
-                  <div className="w-12 h-12 rounded-full overflow-hidden mr-3">
-                    <img 
-                      src="/images/monk-portrait.jpg" 
-                      alt={wisdom.author}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div>
-                    <p className="text-sage-800 font-medium">{wisdom.author}</p>
-                    <p className="text-sage-600 text-sm">Bài giảng về buông bỏ</p>
-                  </div>
-                </div>
-              </div>
-              
-              {showFeedback && !selectedReaction && (
-                <div className="mb-6 mt-8 animate-fade-in bg-sage-50/70 p-4 rounded-lg">
-                  <p className="text-center text-sm text-sage-600 mb-4">
-                    Con cảm thấy thế nào sau khi nghe điều này?
+                <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-6 text-center">
+                  <blockquote className="font-serif text-xl leading-relaxed text-sage-800 mb-3">
+                    "{wisdom.quote}"
+                  </blockquote>
+                  <p className="text-sage-600 italic text-sm">
+                    — {wisdom.author}
                   </p>
-                  <div className="flex justify-center gap-4">
-                    {REACTION_EMOJIS.map((emoji) => (
-                      <button
-                        key={emoji}
-                        onClick={() => setSelectedReaction(emoji)}
-                        className="flex flex-col items-center p-2 rounded-lg transition-all hover:bg-sage-50"
-                      >
-                        <span className="text-2xl mb-1">{emoji}</span>
-                      </button>
-                    ))}
-                  </div>
                 </div>
-              )}
+              </div>
               
               <div className="flex gap-3 mt-6">
                 <Button 
@@ -252,193 +167,92 @@ const Home = () => {
                 <Button 
                   variant="outline" 
                   className="flex-1"
-                  onClick={() => setShowResponseOptions(true)}
+                  onClick={() => setResponseType(prev => prev ? null : 'voice')}
                 >
                   Phản hồi
                 </Button>
               </div>
               
-              {showResponseOptions && !responseType && (
-                <div className="mb-6 animate-fade-in bg-sage-50 p-4 rounded-lg border border-sage-100">
-                  <p className="text-sage-700 mb-3 font-medium">Chọn cách phản hồi:</p>
-                  <Button
-                    variant="outline"
-                    className="w-full mb-2"
-                    onClick={() => setResponseType('voice')}
+              {responseType && (
+                <div className="mt-6 animate-fade-in bg-sage-50 p-4 rounded-lg border border-sage-100">
+                  <Select
+                    onValueChange={(value: 'voice' | 'todo') => setResponseType(value)}
+                    defaultValue={responseType}
                   >
-                    <Mic className="mr-2 h-4 w-4" />
-                    Ghi âm cảm nhận
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                    onClick={() => setResponseType('todo')}
-                  >
-                    <ChevronRight className="mr-2 h-4 w-4" />
-                    Tạo hành động
-                  </Button>
-                </div>
-              )}
-              
-              {responseType === 'voice' && (
-                <div className="mb-6 animate-fade-in bg-sage-50 p-4 rounded-lg border border-sage-100">
-                  <p className="text-sage-700 mb-3 font-medium">Ghi âm cảm nhận của bạn:</p>
-                  <div className="flex flex-col items-center mb-3">
-                    <Button
-                      variant={isRecording ? "default" : "outline"}
-                      className={`rounded-full h-16 w-16 ${isRecording ? 'animate-pulse bg-red-500' : ''}`}
-                      onClick={handleStartRecording}
-                    >
-                      <Mic className="h-6 w-6" />
-                    </Button>
-                    <p className="text-sm text-sage-600 mt-2">
-                      {isRecording ? 'Đang ghi âm...' : 'Nhấn để bắt đầu'}
-                    </p>
-                  </div>
-                  <Textarea 
-                    placeholder="Ghi chú bổ sung (không bắt buộc)"
-                    className="mb-3"
-                  />
-                  <Button
-                    className="w-full"
-                    onClick={handleSaveResponse}
-                  >
-                    Lưu phản hồi
-                  </Button>
-                </div>
-              )}
-              
-              {responseType === 'todo' && (
-                <div className="mb-6 animate-fade-in bg-sage-50 p-4 rounded-lg border border-sage-100">
-                  <p className="text-sage-700 mb-3 font-medium">Tạo 5 điều hành động:</p>
-                  {Array(5).fill("").map((_, idx) => (
-                    <div key={idx} className="flex mb-2 gap-2">
-                      <div className="flex-grow">
-                        <input
-                          className="w-full p-2 border border-sage-200 rounded"
-                          placeholder={`Hoạt động ${idx + 1} (vd: ngồi thiền 5 phút)`}
-                          value={todoItems[idx]}
-                          onChange={(e) => {
-                            const newItems = [...todoItems];
-                            newItems[idx] = e.target.value;
-                            setTodoItems(newItems);
-                          }}
-                        />
-                      </div>
-                      <select className="border border-sage-200 rounded px-2">
-                        <option>5 AM</option>
-                        <option>10 PM</option>
-                      </select>
-                    </div>
-                  ))}
-                  <Button
-                    className="w-full mt-2"
-                    onClick={handleSaveResponse}
-                  >
-                    Lưu hành động
-                  </Button>
-                </div>
-              )}
-              
-              {showEarlyUserInvite && (
-                <div className="mb-6 bg-sage-50 p-4 rounded-lg border border-sage-100 animate-fade-in">
-                  <p className="text-sm text-sage-700 mb-3">
-                    Bạn muốn góp ý để cải thiện app Hỏi Phật? Tham gia nhóm Facebook dành cho những người dùng đầu tiên 💬
-                  </p>
-                  <div className="flex justify-center">
-                    <a 
-                      href="https://m.me/j/AbbtegYf3SbXf4k2/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <Button 
-                        variant="outline" 
-                        className="bg-white border-sage-200"
+                    <SelectTrigger className="w-full mb-4">
+                      <SelectValue placeholder="Chọn cách phản hồi" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="voice">Ghi âm cảm nhận</SelectItem>
+                      <SelectItem value="todo">Tạo hành động</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  {responseType === 'voice' && (
+                    <div className="flex flex-col items-center gap-4">
+                      <Button
+                        variant={isRecording ? "default" : "outline"}
+                        className={`rounded-full h-16 w-16 ${isRecording ? 'animate-pulse bg-red-500' : ''}`}
+                        onClick={handleStartRecording}
                       >
-                        <MessageCircle className="h-4 w-4 mr-2" />
-                        Vào nhóm Early Users
+                        <Mic className="h-6 w-6" />
                       </Button>
-                    </a>
-                  </div>
+                      <p className="text-sm text-sage-600">
+                        {isRecording ? 'Đang ghi âm...' : 'Nhấn để bắt đầu'}
+                      </p>
+                      <Textarea 
+                        placeholder="Ghi chú bổ sung (không bắt buộc)"
+                        className="mb-3"
+                      />
+                      <Button
+                        className="w-full"
+                        onClick={handleSaveResponse}
+                      >
+                        Lưu phản hồi
+                      </Button>
+                    </div>
+                  )}
+
+                  {responseType === 'todo' && (
+                    <div className="space-y-3">
+                      {Array(5).fill("").map((_, idx) => (
+                        <div key={idx} className="flex gap-2">
+                          <Input
+                            className="flex-grow"
+                            placeholder={`Hoạt động ${idx + 1} (vd: ngồi thiền 5 phút)`}
+                            value={todoItems[idx]}
+                            onChange={(e) => {
+                              const newItems = [...todoItems];
+                              newItems[idx] = e.target.value;
+                              setTodoItems(newItems);
+                            }}
+                          />
+                          <Select defaultValue="5 AM">
+                            <SelectTrigger className="w-24">
+                              <SelectValue placeholder="Giờ" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="5 AM">5 AM</SelectItem>
+                              <SelectItem value="10 PM">10 PM</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      ))}
+                      <Button
+                        className="w-full mt-4"
+                        onClick={handleSaveResponse}
+                      >
+                        Lưu hành động
+                      </Button>
+                    </div>
+                  )}
                 </div>
               )}
-              
-              <div className="flex justify-between border-t border-sage-100 pt-3">
-                <p className="text-sm text-sage-600">Chia sẻ:</p>
-                <div className="flex gap-2">
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="text-blue-600"
-                    onClick={() => handleShareSocial('Facebook')}
-                  >
-                    FB
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="text-pink-600"
-                    onClick={() => handleShareSocial('Instagram')}
-                  >
-                    IG
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="text-blue-500"
-                    onClick={() => handleShareSocial('Zalo')}
-                  >
-                    Zalo
-                  </Button>
-                </div>
-              </div>
             </CardContent>
           </Card>
         ) : (
-          <>
-            <div className="text-center my-4">
-              <h2 className="font-serif text-2xl text-sage-800 mb-8">
-                Hôm nay con cảm thấy thế nào?
-              </h2>
-            </div>
-            
-            <div className="flex flex-col items-center gap-6 mb-8">
-              <Popover open={showVoicePopover} onOpenChange={setShowVoicePopover}>
-                <PopoverTrigger asChild>
-                  <Button 
-                    variant="outline" 
-                    className="w-20 h-20 rounded-full p-0"
-                    onClick={() => setShowVoicePopover(true)}
-                  >
-                    <Mic className="h-8 w-8" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-72">
-                  <div className="flex flex-col items-center">
-                    <p className="mb-3 text-sm text-sage-600">Hãy nói cảm xúc của bạn</p>
-                    <Button 
-                      variant={isRecording ? "default" : "outline"} 
-                      className={`rounded-full h-16 w-16 ${isRecording ? 'animate-pulse bg-red-500' : ''}`}
-                      onClick={handleStartRecording}
-                    >
-                      <Mic className="h-6 w-6" />
-                    </Button>
-                    <p className="mt-2 text-xs text-sage-500">
-                      {isRecording ? 'Đang ghi âm...' : 'Nhấn để bắt đầu'}
-                    </p>
-                  </div>
-                </PopoverContent>
-              </Popover>
-              
-              <Textarea 
-                placeholder="Hoặc gõ cảm xúc của bạn ở đây..."
-                className="w-full max-w-md"
-                value={userText}
-                onChange={(e) => setUserText(e.target.value)}
-              />
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
+          <div className="flex flex-col items-center gap-8">
+            <div className="grid grid-cols-2 gap-4 w-full max-w-md">
               {INTENTS.map(intent => (
                 <Button 
                   key={intent.value}
@@ -456,33 +270,56 @@ const Home = () => {
               ))}
             </div>
             
-            <Button 
-              size="lg"
-              className="mt-8 w-full py-6 text-lg font-medium"
-              onClick={handleAskBuddha}
-              disabled={isAsking}
-            >
-              {isAsking ? (
-                <>
-                  <div className="lotus-loader mr-2">🪷</div>
-                  Đang hỏi...
-                </>
-              ) : (
-                <>
-                  Hỏi Phật
-                  <ChevronRight className="h-5 w-5 ml-1" />
-                </>
-              )}
-            </Button>
-          </>
+            <div className="w-full max-w-md space-y-4">
+              <div className="flex justify-center">
+                <Button 
+                  variant="outline" 
+                  className="w-16 h-16 rounded-full"
+                  onClick={() => setIsRecording(!isRecording)}
+                >
+                  <Mic className="h-6 w-6" />
+                </Button>
+              </div>
+              
+              <Textarea 
+                placeholder="Hoặc gõ cảm xúc của bạn ở đây..."
+                className="w-full"
+                value={userText}
+                onChange={(e) => setUserText(e.target.value)}
+              />
+              
+              <Button 
+                size="lg"
+                className="w-full py-6 text-lg font-medium"
+                onClick={handleAskBuddha}
+                disabled={isAsking}
+              >
+                {isAsking ? (
+                  <>
+                    <div className="lotus-loader mr-2">🪷</div>
+                    Đang hỏi...
+                  </>
+                ) : (
+                  <>
+                    Hỏi Phật
+                    <ChevronRight className="h-5 w-5 ml-1" />
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
         )}
       </main>
-      
+
       {showLoginModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 animate-fade-in">
           <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <h3 className="text-lg font-medium text-sage-800 mb-3">Con hãy tạo tài khoản để lưu lại tiến độ nhé.</h3>
-            <p className="text-sage-600 mb-6">Tạo tài khoản để lưu lại tất cả các trải nghiệm và nhận thêm nhiều lời dạy hữu ích.</p>
+            <h3 className="text-lg font-medium text-sage-800 mb-3">
+              Con hãy tạo tài khoản để lưu lại tiến độ nhé.
+            </h3>
+            <p className="text-sage-600 mb-6">
+              Tạo tài khoản để lưu lại tất cả các trải nghiệm và nhận thêm nhiều lời dạy hữu ích.
+            </p>
             
             <div className="flex flex-col gap-3">
               <Button className="bg-sage-600 hover:bg-sage-700">
@@ -499,10 +336,6 @@ const Home = () => {
           </div>
         </div>
       )}
-      
-      <footer className="p-4 text-center text-sm text-sage-500">
-        <p>Mỗi ngày một lời Phật dạy</p>
-      </footer>
     </div>
   );
 };
