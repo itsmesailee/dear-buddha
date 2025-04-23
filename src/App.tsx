@@ -11,11 +11,13 @@ import Onboarding from "./pages/Onboarding";
 import Wisdom from "./pages/Wisdom";
 import Library from "./pages/Library";
 import NotFound from "./pages/NotFound";
+import SplashScreen from "./pages/SplashScreen";
+import DeveloperNotes from "./pages/DeveloperNotes";
 
 const queryClient = new QueryClient();
 
 const App = () => {
-  // Force onboarding completion status to true
+  const [showSplash, setShowSplash] = useState(true);
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(true);
 
   useEffect(() => {
@@ -23,6 +25,13 @@ const App = () => {
     if (!localStorage.getItem('hoiphat_intent')) {
       localStorage.setItem('hoiphat_intent', 'calm');
     }
+    
+    // Hide splash after 3.5 seconds
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+    }, 3500);
+    
+    return () => clearTimeout(timer);
   }, []);
 
   return (
@@ -30,13 +39,14 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
+        {showSplash && <SplashScreen />}
         <BrowserRouter>
           <Routes>
-            {/* Always direct to Home page */}
             <Route path="/" element={<Home />} />
             <Route path="/onboarding" element={<Navigate to="/" replace />} />
             <Route path="/wisdom" element={<Wisdom />} />
             <Route path="/library" element={<Library />} />
+            <Route path="/dev-notes" element={<DeveloperNotes />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
