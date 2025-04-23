@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Repeat, Bookmark, MessageSquare, ListTodo, Mic } from "lucide-react";
+import { Mic, MessageSquare, Bookmark, Share2, ArrowLeft } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -44,10 +44,18 @@ const WisdomDisplay = ({
   const [feedbackType, setFeedbackType] = useState<'voice' | 'text' | null>(null);
   const [feedbackText, setFeedbackText] = useState("");
   const [isRecording, setIsRecording] = useState(false);
+  const [showShareOptions, setShowShareOptions] = useState(false);
+
+  const handleShare = (platform: 'instagram' | 'facebook' | 'zalo') => {
+    // Implement sharing logic here
+    console.log(`Sharing to ${platform}`);
+    setShowShareOptions(false);
+  };
 
   return (
     <Card className="glass-card animate-fade-in relative overflow-hidden">
       <CardContent className="p-6">
+        {/* Quote display section */}
         <div className="relative w-full h-64 mb-6">
           <img
             src="/lovable-uploads/caaf6f74-6849-47d2-8482-cbac0192a153.png"
@@ -67,6 +75,7 @@ const WisdomDisplay = ({
           </div>
         </div>
 
+        {/* Emoji reactions */}
         <div className="text-center mb-6">
           <p className="text-sage-700 mb-3">Con cảm thấy thế nào sau khi nghe điều này?</p>
           <div className="flex justify-center gap-4">
@@ -84,48 +93,54 @@ const WisdomDisplay = ({
           </div>
         </div>
         
-        <div className="flex items-center justify-between gap-3">
+        {/* Main action buttons */}
+        <div className="grid grid-cols-3 gap-4 mb-6">
           <Button 
-            variant="ghost"
-            size="icon"
-            className="text-sage-700 hover:text-sage-800 hover:bg-sage-50 text-lg"
-            onClick={onAskAgain}
-            aria-label="Hỏi lại"
+            variant="outline"
+            className="flex flex-col items-center gap-2 p-4 h-auto"
+            onClick={() => setShowFeedback(!showFeedback)}
           >
-            <Repeat className="h-6 w-6" />
+            <MessageSquare className="h-6 w-6" />
+            <span className="text-sm">Respond</span>
           </Button>
           
           <Button 
-            variant="ghost"
-            size="icon"
-            className="text-sage-700 hover:text-sage-800 hover:bg-sage-50 text-lg"
+            variant="outline"
+            className="flex flex-col items-center gap-2 p-4 h-auto"
             onClick={onSave}
-            aria-label="Lưu lại"
           >
             <Bookmark className="h-6 w-6" />
+            <span className="text-sm">Save</span>
           </Button>
 
           <Button 
-            variant="ghost"
-            size="icon"
-            className="text-sage-700 hover:text-sage-800 hover:bg-sage-50 text-lg"
-            onClick={() => setShowFeedback(!showFeedback)}
-            aria-label="Phản hồi"
+            variant="outline"
+            className="flex flex-col items-center gap-2 p-4 h-auto"
+            onClick={() => setShowShareOptions(!showShareOptions)}
           >
-            <MessageSquare className="h-6 w-6" />
-          </Button>
-
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-sage-700 hover:text-sage-800 hover:bg-sage-50 text-lg"
-            onClick={() => setShowTodoInput(!showTodoInput)}
-            aria-label="Tạo việc cần làm"
-          >
-            <ListTodo className="h-6 w-6" />
+            <Share2 className="h-6 w-6" />
+            <span className="text-sm">Share</span>
           </Button>
         </div>
+
+        {/* Share options */}
+        {showShareOptions && (
+          <div className="bg-white/95 p-4 rounded-lg shadow-sm mb-6 animate-fade-in">
+            <div className="grid grid-cols-3 gap-4">
+              <Button variant="ghost" onClick={() => handleShare('instagram')}>
+                Instagram Story
+              </Button>
+              <Button variant="ghost" onClick={() => handleShare('facebook')}>
+                Facebook
+              </Button>
+              <Button variant="ghost" onClick={() => handleShare('zalo')}>
+                Zalo
+              </Button>
+            </div>
+          </div>
+        )}
         
+        {/* Feedback section */}
         {showFeedback && (
           <div className="mt-6 animate-fade-in space-y-4">
             <Select 
@@ -179,9 +194,9 @@ const WisdomDisplay = ({
             
             <Button
               className="w-full"
-              onClick={onSave}
+              onClick={() => setShowTodoInput(true)}
             >
-              Lưu phản hồi
+              Tạo việc cần làm từ suy ngẫm này
             </Button>
           </div>
         )}
@@ -189,6 +204,17 @@ const WisdomDisplay = ({
         {showTodoInput && (
           <ActionInput onSave={onSave} />
         )}
+
+        {/* Subtle "Ask again" link */}
+        <Button 
+          variant="ghost" 
+          size="sm"
+          className="mt-6 text-sage-500 hover:text-sage-700 w-full flex items-center justify-center gap-2"
+          onClick={onAskAgain}
+        >
+          <ArrowLeft className="h-4 w-4" />
+          <span>Hỏi lại</span>
+        </Button>
       </CardContent>
     </Card>
   );
