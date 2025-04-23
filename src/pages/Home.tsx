@@ -1,20 +1,12 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Mic, ChevronRight, ThumbsUp, MessageCircle } from "lucide-react";
+import { Mic, Heart, MessageCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { generateBuddhistWisdom } from '@/lib/wisdom';
 import { Textarea } from "@/components/ui/textarea";
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const INTENTS = [
   { value: "calm", label: "Bình yên", emoji: "😌" },
@@ -35,8 +27,8 @@ const Home = () => {
   const [usageCount, setUsageCount] = useState(0);
   const [userText, setUserText] = useState("");
   const [isRecording, setIsRecording] = useState(false);
-  const [responseType, setResponseType] = useState<'voice' | 'todo' | null>(null);
-  const [todoItems, setTodoItems] = useState(Array(5).fill(""));
+  const [showShareCheckbox, setShowShareCheckbox] = useState(false);
+  const [shareThoughts, setShareThoughts] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   
   const navigate = useNavigate();
@@ -50,7 +42,7 @@ const Home = () => {
   const handleAskBuddha = () => {
     if (!selectedIntent && !userText) {
       toast({
-        title: "Vui lòng chọn ý định hoặc nhập câu hỏi",
+        title: "Vui lòng chọn tâm trạng hoặc chia sẻ cảm xúc",
         description: "Hãy cho chúng tôi biết bạn đang cảm thấy thế nào.",
         variant: "destructive"
       });
@@ -58,7 +50,7 @@ const Home = () => {
     }
     
     setIsAsking(true);
-    setResponseType(null);
+    setShowShareCheckbox(false);
     
     const newCount = usageCount + 1;
     setUsageCount(newCount);
@@ -82,6 +74,10 @@ const Home = () => {
     }, 3000);
   };
 
+  const handleResponse = () => {
+    setShowShareCheckbox(true);
+  };
+
   const handleSaveResponse = () => {
     if (usageCount > 2) {
       setShowLoginModal(true);
@@ -90,37 +86,8 @@ const Home = () => {
         title: "Đã lưu phản hồi",
         description: "Cảm ơn con đã chia sẻ."
       });
-      setResponseType(null);
+      setShowShareCheckbox(false);
     }
-  };
-
-  const saveWisdom = () => {
-    if (!wisdom) return;
-    
-    const savedWisdomStr = localStorage.getItem('hoiphat_saved_wisdom');
-    const savedWisdom = savedWisdomStr ? JSON.parse(savedWisdomStr) : [];
-    
-    const updatedWisdom = [
-      {...wisdom, savedAt: new Date().toISOString(), intent: selectedIntent},
-      ...savedWisdom
-    ].slice(0, 5);
-    
-    localStorage.setItem('hoiphat_saved_wisdom', JSON.stringify(updatedWisdom));
-    
-    toast({
-      title: "Đã lưu lời Phật dạy",
-      description: "Bạn có thể xem lại trong phần Lời dạy đã lưu.",
-      action: (
-        <Button size="sm" variant="outline" onClick={() => navigate('/wisdom')}>
-          Xem ngay
-        </Button>
-      )
-    });
-  };
-
-  const resetWisdom = () => {
-    setWisdom(null);
-    setResponseType(null);
   };
 
   return (
@@ -140,55 +107,67 @@ const Home = () => {
                   className="w-full h-full object-cover rounded-lg"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-6 text-center">
-                  <blockquote className="font-serif text-xl leading-relaxed text-sage-800 mb-3">
-                    "{wisdom.quote}"
-                  </blockquote>
-                  <p className="text-sage-600 italic text-sm">
-                    — {wisdom.author}
-                  </p>
+                <div className="absolute bottom-0 left-0 right-0 p-6">
+                  <div className="bg-white/90 backdrop-blur-sm rounded-lg p-6 shadow-sm">
+                    <blockquote className="font-serif text-xl leading-relaxed text-sage-800 mb-3">
+                      "{wisdom.quote}"
+                    </blockquote>
+                    <p className="text-sage-600 italic text-sm">
+                      — {wisdom.author}
+                    </p>
+                  </div>
                 </div>
               </div>
               
-              <div className="flex gap-3 mt-6">
+              <div className="flex items-center justify-between gap-3 mt-6">
                 <Button 
                   variant="outline" 
                   className="flex-1"
-                  onClick={resetWisdom}
+                  onClick={() => {
+                    setWisdom(null);
+                    setShowShareCheckbox(false);
+                  }}
                 >
                   Hỏi lại
                 </Button>
                 <Button 
-                  className="flex-1"
-                  onClick={saveWisdom}
+                  variant="ghost"
+                  size="icon"
+                  className="text-red-400 hover:text-red-500 hover:bg-red-50"
+                  onClick={() => {
+                    toast({
+                      title: "Đã lưu vào mục yêu thích",
+                    });
+                  }}
                 >
-                  Lưu lại
+                  <Heart className="h-5 w-5" />
                 </Button>
                 <Button 
-                  variant="outline" 
                   className="flex-1"
-                  onClick={() => setResponseType(prev => prev ? null : 'voice')}
+                  onClick={handleResponse}
                 >
+                  <MessageCircle className="mr-2 h-4 w-4" />
                   Phản hồi
                 </Button>
               </div>
               
-              {responseType && (
-                <div className="mt-6 animate-fade-in bg-sage-50 p-4 rounded-lg border border-sage-100">
-                  <Select
-                    onValueChange={(value: 'voice' | 'todo') => setResponseType(value)}
-                    defaultValue={responseType}
-                  >
-                    <SelectTrigger className="w-full mb-4">
-                      <SelectValue placeholder="Chọn cách phản hồi" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="voice">Ghi âm cảm nhận</SelectItem>
-                      <SelectItem value="todo">Tạo hành động</SelectItem>
-                    </SelectContent>
-                  </Select>
-
-                  {responseType === 'voice' && (
+              {showShareCheckbox && (
+                <div className="mt-6 animate-fade-in space-y-4">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="share" 
+                      checked={shareThoughts}
+                      onCheckedChange={(checked) => setShareThoughts(checked as boolean)}
+                    />
+                    <label 
+                      htmlFor="share" 
+                      className="text-sm text-sage-700"
+                    >
+                      Chia sẻ cảm nghĩ với mọi người
+                    </label>
+                  </div>
+                  
+                  <div className="space-y-4">
                     <div className="flex flex-col items-center gap-4">
                       <Button
                         variant={isRecording ? "default" : "outline"}
@@ -200,58 +179,28 @@ const Home = () => {
                       <p className="text-sm text-sage-600">
                         {isRecording ? 'Đang ghi âm...' : 'Nhấn để bắt đầu'}
                       </p>
-                      <Textarea 
-                        placeholder="Ghi chú bổ sung (không bắt buộc)"
-                        className="mb-3"
-                      />
-                      <Button
-                        className="w-full"
-                        onClick={handleSaveResponse}
-                      >
-                        Lưu phản hồi
-                      </Button>
                     </div>
-                  )}
-
-                  {responseType === 'todo' && (
-                    <div className="space-y-3">
-                      {Array(5).fill("").map((_, idx) => (
-                        <div key={idx} className="flex gap-2">
-                          <Input
-                            className="flex-grow"
-                            placeholder={`Hoạt động ${idx + 1} (vd: ngồi thiền 5 phút)`}
-                            value={todoItems[idx]}
-                            onChange={(e) => {
-                              const newItems = [...todoItems];
-                              newItems[idx] = e.target.value;
-                              setTodoItems(newItems);
-                            }}
-                          />
-                          <Select defaultValue="5 AM">
-                            <SelectTrigger className="w-24">
-                              <SelectValue placeholder="Giờ" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="5 AM">5 AM</SelectItem>
-                              <SelectItem value="10 PM">10 PM</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      ))}
-                      <Button
-                        className="w-full mt-4"
-                        onClick={handleSaveResponse}
-                      >
-                        Lưu hành động
-                      </Button>
-                    </div>
-                  )}
+                    <Textarea 
+                      placeholder="Hoặc gõ cảm nghĩ của bạn ở đây..."
+                      className="mb-3"
+                    />
+                    <Button
+                      className="w-full"
+                      onClick={handleSaveResponse}
+                    >
+                      Lưu phản hồi
+                    </Button>
+                  </div>
                 </div>
               )}
             </CardContent>
           </Card>
         ) : (
           <div className="flex flex-col items-center gap-8">
+            <h2 className="text-2xl font-serif text-sage-800 text-center">
+              Hôm nay con cảm thấy thế nào?
+            </h2>
+            
             <div className="grid grid-cols-2 gap-4 w-full max-w-md">
               {INTENTS.map(intent => (
                 <Button 
@@ -271,7 +220,7 @@ const Home = () => {
             </div>
             
             <div className="w-full max-w-md space-y-4">
-              <div className="flex justify-center">
+              <div className="text-center">
                 <Button 
                   variant="outline" 
                   className="w-16 h-16 rounded-full"
@@ -300,10 +249,7 @@ const Home = () => {
                     Đang hỏi...
                   </>
                 ) : (
-                  <>
-                    Hỏi Phật
-                    <ChevronRight className="h-5 w-5 ml-1" />
-                  </>
+                  "Hỏi Phật"
                 )}
               </Button>
             </div>

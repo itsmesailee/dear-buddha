@@ -37,8 +37,8 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
       <div className="text-center">
         <div className="mb-6 relative w-64 h-64 mx-auto">
           <img
-            src="/images/buddha-illustration.png"
-            alt="Buddha under tree"
+            src="/lovable-uploads/d2ac33b9-a2d0-49d4-9c8e-55d363e8cf82.png"
+            alt="Buddha statue"
             className="w-full h-full object-contain"
           />
         </div>
