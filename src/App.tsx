@@ -25,32 +25,32 @@ const App = () => {
     if (!localStorage.getItem('hoiphat_intent')) {
       localStorage.setItem('hoiphat_intent', 'calm');
     }
-    
-    // Hide splash after 3.5 seconds
-    const timer = setTimeout(() => {
-      setShowSplash(false);
-    }, 3500);
-    
-    return () => clearTimeout(timer);
   }, []);
+
+  // Handler for splash screen completion
+  const handleSplashComplete = () => {
+    setShowSplash(false);
+  };
 
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        {showSplash && <SplashScreen />}
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/onboarding" element={<Navigate to="/" replace />} />
-            <Route path="/wisdom" element={<Wisdom />} />
-            <Route path="/library" element={<Library />} />
-            <Route path="/dev-notes" element={<DeveloperNotes />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+        {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
+        <div style={{ display: showSplash ? 'none' : 'block' }}>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/onboarding" element={<Navigate to="/" replace />} />
+              <Route path="/wisdom" element={<Wisdom />} />
+              <Route path="/library" element={<Library />} />
+              <Route path="/dev-notes" element={<DeveloperNotes />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </div>
       </TooltipProvider>
     </QueryClientProvider>
   );
