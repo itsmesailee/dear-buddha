@@ -1,6 +1,5 @@
 
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 interface SplashScreenProps {
   onComplete?: () => void;
@@ -8,8 +7,6 @@ interface SplashScreenProps {
 
 const SplashScreen = ({ onComplete }: SplashScreenProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
-  // Only use navigate if it's available (when component is used inside Router)
-  const navigate = useNavigate && typeof useNavigate === 'function' ? useNavigate() : undefined;
 
   useEffect(() => {
     // Play bell sound on load
@@ -22,9 +19,7 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
     const timer = setTimeout(() => {
       setIsLoaded(true);
       setTimeout(() => {
-        if (navigate) {
-          navigate('/');
-        } else if (onComplete) {
+        if (onComplete) {
           onComplete();
         }
       }, 500);
@@ -34,7 +29,7 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
       clearTimeout(timer);
       bellSound.pause();
     };
-  }, [navigate, onComplete]);
+  }, [onComplete]);
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-sage-50 transition-opacity duration-500 z-50"

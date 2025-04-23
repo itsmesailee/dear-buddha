@@ -37,9 +37,10 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
-        <div style={{ display: showSplash ? 'none' : 'block' }}>
-          <BrowserRouter>
+        <BrowserRouter>
+          {showSplash ? (
+            <SplashScreen onComplete={handleSplashComplete} />
+          ) : (
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/onboarding" element={<Navigate to="/" replace />} />
@@ -49,8 +50,8 @@ const App = () => {
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </BrowserRouter>
-        </div>
+          )}
+        </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
   );
