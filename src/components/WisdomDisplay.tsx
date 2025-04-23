@@ -45,11 +45,26 @@ const WisdomDisplay = ({
   const [feedbackText, setFeedbackText] = useState("");
   const [isRecording, setIsRecording] = useState(false);
   const [showShareOptions, setShowShareOptions] = useState(false);
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
 
   const handleShare = (platform: 'instagram' | 'facebook' | 'zalo') => {
     // Implement sharing logic here
     console.log(`Sharing to ${platform}`);
     setShowShareOptions(false);
+  };
+
+  const handleFeedbackSubmit = () => {
+    // Submit the feedback (voice or text)
+    if (feedbackType === 'text' && feedbackText.trim()) {
+      // Logic to handle text feedback submission
+      setFeedbackSubmitted(true);
+      setShowFeedback(false);
+    } else if (feedbackType === 'voice' && isRecording) {
+      // Logic to handle voice feedback submission
+      setFeedbackSubmitted(true);
+      setShowFeedback(false);
+      setIsRecording(false);
+    }
   };
 
   return (
@@ -123,23 +138,6 @@ const WisdomDisplay = ({
           </Button>
         </div>
 
-        {/* Share options */}
-        {showShareOptions && (
-          <div className="bg-white/95 p-4 rounded-lg shadow-sm mb-6 animate-fade-in">
-            <div className="grid grid-cols-3 gap-4">
-              <Button variant="ghost" onClick={() => handleShare('instagram')}>
-                Instagram Story
-              </Button>
-              <Button variant="ghost" onClick={() => handleShare('facebook')}>
-                Facebook
-              </Button>
-              <Button variant="ghost" onClick={() => handleShare('zalo')}>
-                Zalo
-              </Button>
-            </div>
-          </div>
-        )}
-        
         {/* Feedback section */}
         {showFeedback && (
           <div className="mt-6 animate-fade-in space-y-4">
@@ -194,9 +192,26 @@ const WisdomDisplay = ({
             
             <Button
               className="w-full"
-              onClick={() => setShowTodoInput(true)}
+              onClick={handleFeedbackSubmit}
+              disabled={!((feedbackType === 'text' && feedbackText.trim()) || (feedbackType === 'voice' && isRecording))}
             >
-              Tạo việc cần làm từ suy ngẫm này
+              Gửi cảm nhận
+            </Button>
+          </div>
+        )}
+
+        {/* To-do input section - now triggered after feedback submission */}
+        {feedbackSubmitted && (
+          <div className="mt-6 animate-fade-in">
+            <p className="text-sage-700 mb-4">Bạn có muốn chuyển suy ngẫm này thành một hành động?</p>
+            <Button
+              className="w-full"
+              onClick={() => {
+                setShowTodoInput(true);
+                setFeedbackSubmitted(false);
+              }}
+            >
+              Tạo việc cần làm
             </Button>
           </div>
         )}
@@ -221,3 +236,4 @@ const WisdomDisplay = ({
 };
 
 export default WisdomDisplay;
+
