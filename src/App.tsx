@@ -13,6 +13,11 @@ import Library from "./pages/Library";
 import NotFound from "./pages/NotFound";
 import SplashScreen from "./pages/SplashScreen";
 import DeveloperNotes from "./pages/DeveloperNotes";
+import WelcomeScreen from "./pages/WelcomeScreen";
+import ReflectionInput from "./pages/ReflectionInput";
+import CompanionResponse from "./pages/CompanionResponse";
+import WisdomInbox from "./pages/WisdomInbox";
+import ProfilePage from "./pages/ProfilePage";
 
 const queryClient = new QueryClient();
 
@@ -42,7 +47,12 @@ const App = () => {
             <SplashScreen onComplete={handleSplashComplete} />
           ) : (
             <Routes>
-              <Route path="/" element={<Home />} />
+              <Route path="/" element={<WelcomeScreen />} />
+              <Route path="/home" element={<Home />} />
+              <Route path="/reflect" element={<ReflectionInput />} />
+              <Route path="/companion" element={<CompanionResponse />} />
+              <Route path="/wisdom-inbox" element={<WisdomInbox />} />
+              <Route path="/profile" element={<ProfilePage />} />
               <Route path="/onboarding" element={<Navigate to="/" replace />} />
               <Route path="/wisdom" element={<Wisdom />} />
               <Route path="/library" element={<Library />} />
