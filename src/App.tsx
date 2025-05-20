@@ -1,10 +1,10 @@
 
+import React, { useEffect, useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useEffect, useState } from "react";
 
 import Home from "./pages/Home";
 import Onboarding from "./pages/Onboarding";
@@ -21,7 +21,7 @@ import ProfilePage from "./pages/ProfilePage";
 
 const queryClient = new QueryClient();
 
-const App = () => {
+const App: React.FC = () => {
   const [showSplash, setShowSplash] = useState(true);
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(true);
 
